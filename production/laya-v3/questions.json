@@ -1,0 +1,29 @@
+{
+  "action": {
+    "type": "choice",
+    "instructions": "Which action is explicitly requested by the user? If no action is requested, choose none.",
+    "criteria": {
+      "approach": "Walk closer. Come here. Come closer to me. Approach me.",
+      "stepback": "Move away. Step back. Go back. Give me space. Keep your distance.",
+      "wave": "Wave your hand. Wave hello. Greet me with a wave.",
+      "comfort": "Comfort me. Reassure me. I feel sad, anxious, lonely or overwhelmed.",
+      "none": "Ordinary conversation. Asking a question. No action. Do not move.",
+      "sit": "Sit down. Sit with me on the sofa. Let us sit together on the couch.",
+      "stand": "Stand up from the sofa. Get up. Leave the seat.",
+      "beside": "Stand beside me. Stand next to me. Stay by my side.",
+      "pour": "Pour the wine. Pour a drink. Fill the glass.",
+      "drink": "Raise a glass. Have a drink. Cheers.",
+      "sing": "Sing. Take the microphone. Start the song."
+    }
+  },
+  "speech": {
+    "type": "choice",
+    "instructions": "When should her spoken reply play relative to the action?",
+    "criteria": {
+      "speak": "Ordinary conversation or a question. Say the reply. If she also moves, say it first.",
+      "after": "The visitor asked her to come, sit, stand, pour, drink, sing, or step back. Move first, then speak.",
+      "before": "A greeting, a wave, or comfort. Speak first, then the small gesture.",
+      "silent": "The visitor asked her not to talk, to be quiet, or to stop speaking."
+    }
+  }
+}

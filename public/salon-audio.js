@@ -1,0 +1,15 @@
+export function createSoundscape(){
+ let ctx=null,active=false,music='ktv',volume=.55,ducked=false;const layers=[],buffers=new Map();let token=0;
+ async function load(name){if(buffers.has(name))return buffers.get(name);const response=await fetch('/audio/ambience/'+name+'.mp3');if(!response.ok)throw Error('Room audio could not load');const buffer=await ctx.decodeAudioData(await response.arrayBuffer());buffers.set(name,buffer);return buffer;}
+ function clear(){for(const l of layers){clearTimeout(l.timer);if(l.lfo){try{l.lfo.stop();}catch{}}for(const s of l.sources){try{s.stop();}catch{}}l.gain.disconnect();}layers.length=0;}
+ function duckedName(name){return name==='late-jazz'||name==='ktv-room';}
+ function gain(){if(!ctx)return;for(const l of layers)l.gain.gain.setTargetAtTime(volume*l.level*(ducked?(duckedName(l.name)?.28:.55):1),ctx.currentTime,.35);}
+ function layer(name,buffer,level,offset=0,sweep=false){const g=ctx.createGain(),filter=ctx.createBiquadFilter();filter.type='lowpass';filter.frequency.value=sweep?2800:1800;g.connect(filter);filter.connect(ctx.destination);let lfo=null;if(sweep){lfo=ctx.createOscillator();const depth=ctx.createGain();depth.gain.value=1400;lfo.frequency.value=.08;filter.frequency.value=2200;lfo.connect(depth);depth.connect(filter.frequency);lfo.start();}const l={name,gain:g,level,timer:null,sources:new Set(),lfo};layers.push(l);const fade=2.4,duration=buffer.duration;
+  function schedule(when){if(!active)return;const source=ctx.createBufferSource(),envelope=ctx.createGain();source.buffer=buffer;source.connect(envelope);envelope.connect(g);envelope.gain.setValueAtTime(0,when);envelope.gain.linearRampToValueAtTime(1,when+fade);envelope.gain.setValueAtTime(1,Math.max(when+fade,when+duration-fade));envelope.gain.linearRampToValueAtTime(0,when+duration);source.start(when);l.sources.add(source);source.onended=()=>{l.sources.delete(source);envelope.disconnect();};l.timer=setTimeout(()=>schedule(when+duration-fade),Math.max(0,(when+duration-fade-ctx.currentTime-1)*1000));}
+  schedule(ctx.currentTime+.08+offset);gain();
+ }
+ async function bed(){if(music==='none')return null;if(music==='ktv'){try{return ['ktv-room',await load('ktv-room')];}catch{buffers.delete('ktv-room');}}return ['late-jazz',await load('late-jazz')];}
+ async function start(){if(!ctx)ctx=new AudioContext();await ctx.resume();active=true;const id=++token;clear();try{const rain=await load('rain-room'),track=await bed();if(!active||id!==token)return;if(track){layer(track[0],track[1],.2,0,true);layer(track[0],track[1],.11,track[1].duration*.41,true);layer('rain-room',rain,.035);}else layer('rain-room',rain,.22);}catch(e){if(id===token){active=false;clear();}throw e;}}
+ function stop(){active=false;token++;clear();}
+ return {start,stop,async setMusic(v){music=v;if(active)await start();},setVolume(v){volume=Math.max(0,Math.min(1,v));gain();},duck(v){ducked=v;gain();},get active(){return active;},snapshot(){return {active,music,ducked,volume,layers:layers.map(x=>x.name)};}};
+}
