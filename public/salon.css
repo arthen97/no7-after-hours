@@ -46,7 +46,7 @@
 .bubble-top{align-items:center}
 #cycle-welcome{padding:4px 8px;font-size:11px;background:#241810;border-color:#e7d3b066}
 .voice-dock{display:flex;align-items:center;gap:10px;margin-top:8px;padding:8px;background:#140e12f4;border:1px solid #e7d3b055;border-radius:16px}
-#voice-input{width:52px;height:52px;flex:none;padding:0;border:0;border-radius:12px;background:#000 url(/assets/ui/mic.png) center/cover no-repeat;color:transparent;font-size:0}
+#voice-input{width:52px;height:52px;flex:none;padding:0;border:0;border-radius:12px;background:#000 url(./assets/ui/mic.png) center/cover no-repeat;color:transparent;font-size:0}
 #voice-input[aria-pressed="true"]{box-shadow:0 0 0 2px #ff8ab4}
 .voice-copy{flex:1;min-width:0}
 .voice-copy small{display:block;font-size:9px;letter-spacing:1.6px;color:#e7d3b0}

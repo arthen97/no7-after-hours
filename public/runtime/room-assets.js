@@ -4,7 +4,7 @@ import {GLTFLoader} from '../vendor/GLTFLoader.js';
 export async function loadRoomAssets(scene){
  const loader=new GLTFLoader();loader.register(parser=>{parser.textureLoader=new T.TextureLoader(parser.options.manager);return{name:'ROOM_HTML_IMAGE_DECODE'};});
  const names=['coffee_table_round_01','modern_wooden_cabinet','vintage_radio_transceiver','vintage_oil_lamp','side_table_tall_01'];
- const loaded=await Promise.all(names.map(n=>loader.loadAsync(`/assets/environment/v8/${n}/${n}.gltf`)));
+ const loaded=await Promise.all(names.map(n=>loader.loadAsync(`./assets/environment/v8/${n}/${n}.gltf`)));
  const models=Object.fromEntries(names.map((n,i)=>[n,loaded[i].scene]));
  function place(name,width,x,y,z,rotation=0){const g=models[name].clone(true);g.rotation.y=rotation;g.updateMatrixWorld(true);let b=new T.Box3().setFromObject(g),size=b.getSize(new T.Vector3());g.scale.setScalar(width/size.x);g.updateMatrixWorld(true);b.setFromObject(g);const center=b.getCenter(new T.Vector3());g.position.set(x-center.x,y-b.min.y,z-center.z);g.traverse(o=>{if(o.isMesh){o.castShadow=o.receiveShadow=true;o.userData.sharedAsset=true;}});scene.add(g);g.updateMatrixWorld(true);return g;}
  const table=place('coffee_table_round_01',1.13,1.5,.015,-.92);

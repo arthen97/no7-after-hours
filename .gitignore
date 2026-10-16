@@ -6,6 +6,8 @@ __pycache__/
 .env
 .env.*
 production/service-runtime/
-public/audio/
+/public/audio/*
+!/public/audio/ambience/
+!/public/audio/ambience/**
 
 /dist/

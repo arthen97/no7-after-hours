@@ -1,6 +1,6 @@
 export function createSoundscape(){
  let ctx=null,active=false,music='ktv',volume=.55,ducked=false;const layers=[],buffers=new Map();let token=0;
- async function load(name){if(buffers.has(name))return buffers.get(name);const response=await fetch('/audio/ambience/'+name+'.mp3');if(!response.ok)throw Error('Room audio could not load');const buffer=await ctx.decodeAudioData(await response.arrayBuffer());buffers.set(name,buffer);return buffer;}
+ async function load(name){if(buffers.has(name))return buffers.get(name);const response=await fetch('./audio/ambience/'+name+'.mp3');if(!response.ok)throw Error('Room audio could not load');const buffer=await ctx.decodeAudioData(await response.arrayBuffer());buffers.set(name,buffer);return buffer;}
  function clear(){for(const l of layers){clearTimeout(l.timer);if(l.lfo){try{l.lfo.stop();}catch{}}for(const s of l.sources){try{s.stop();}catch{}}l.gain.disconnect();}layers.length=0;}
  function duckedName(name){return name==='late-jazz'||name==='ktv-room';}
  function gain(){if(!ctx)return;for(const l of layers)l.gain.gain.setTargetAtTime(volume*l.level*(ducked?(duckedName(l.name)?.28:.55):1),ctx.currentTime,.35);}

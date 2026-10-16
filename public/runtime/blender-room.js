@@ -11,8 +11,8 @@ export async function loadBlenderRoom(scene){
  const loader=new GLTFLoader();
  loader.register(parser=>{parser.textureLoader=new T.TextureLoader(parser.options.manager);return {name:'BLENDER_ROOM_IMAGE_DECODE'};});
  const [asset,response]=await Promise.all([
-  loader.loadAsync('/assets/environment/v10/room-architecture.glb'),
-  fetch('/assets/environment/v10/room-manifest.json')
+  loader.loadAsync('./assets/environment/v10/room-architecture.glb'),
+  fetch('./assets/environment/v10/room-manifest.json')
  ]);
  if(!response.ok)throw new Error('Blender room manifest unavailable');
  const manifest=await response.json(),room=asset.scene;room.name='Blender validated environment';

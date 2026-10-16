@@ -163,10 +163,10 @@ export async function loadSelectedMira(onStatus){
  const bodies={},motions={};
  for(const id of HOSTS){
   onStatus('Loading '+id+'…');
-  const asset=await loader.loadAsync('/assets/hosts/'+id+'.glb?v=43');
+  const asset=await loader.loadAsync('./assets/hosts/'+id+'.glb?v=43');
   dress(asset.scene);
   bodies[id]=asset.scene;
-  const response=await fetch('/assets/host-motion-'+id+'.json?v=44');
+  const response=await fetch('./assets/host-motion-'+id+'.json?v=44');
   if(!response.ok)throw Error('Host motion library unavailable');
   motions[id]=await response.json();
  }
