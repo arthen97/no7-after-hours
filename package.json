@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "start": "python3 salon_server.py"
+    "start": "node server.mjs",
+    "start:local": "python3 salon_server.py"
+  },
+  "engines": {
+    "node": ">=20"
   }
 }
