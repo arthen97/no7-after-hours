@@ -4,7 +4,7 @@ const smooth=t=>{t=T.MathUtils.clamp(t,0,1);return t*t*(3-2*t)};
 const V=(x,y,z)=>new T.Vector3(x,y,z);
 const wrap=a=>T.MathUtils.euclideanModulo(a+Math.PI,Math.PI*2)-Math.PI;
 /** Explicit furniture anchors and authored clips. Idle adds a bounded living posture overlay. */
-export function createSalonPerformance(root,actor,data,{camera,seatY,onView,sofaBounds,stableRig=false}){
+export function createSalonPerformance(root,actor,data,{camera,seatY,onView,sofaBounds,obstacles=[],stableRig=false}){
  const clips=data.clips.map(c=>{const clip=T.AnimationClip.parse(c);clip.uuid=c.uuid||T.MathUtils.generateUUID();return clip;});
  if(new Set(clips.map(c=>c.uuid)).size!==clips.length)throw Error('Animation IDs must be unique');
  const mixer=new T.AnimationMixer(root),actions=Object.fromEntries(clips.map(c=>[c.name,mixer.clipAction(c)]));
@@ -26,15 +26,16 @@ export function createSalonPerformance(root,actor,data,{camera,seatY,onView,sofa
  const point=s=>s.mesh.applyBoneTransform(s.index,new T.Vector3().fromBufferAttribute(s.mesh.geometry.attributes.position,s.index)).applyMatrix4(s.mesh.matrixWorld);
  // Calibrate the sitting contact against the loaded cushion, using the actual skinned surface.
  actions.sit_idle.play();mixer.update(0);actor.updateMatrixWorld(true);
- const seatYs=sensors.seat.map(s=>point(s).y);const bottom=seatYs.length?Math.min(...seatYs):seatY;const seatOffset=T.MathUtils.clamp(seatY+.005-bottom,-.18,.10);
+ const seatYs=sensors.seat.map(s=>point(s).y);const bottom=seatYs.length?Math.min(...seatYs):seatY;const seatOffset=T.MathUtils.clamp(seatY+.012-bottom,-.75,.20);
  const seatedFeet=['Left','Right'].map((side,i)=>{const bone=bones.get(side+'Foot'),p=actor.worldToLocal(bone.getWorldPosition(new T.Vector3()));const ys=sensors.feet[i].map(s=>point(s).y);return {p,soleOffset:ys.length?bone.getWorldPosition(new T.Vector3()).y-Math.min(...ys):.02,q:bone.getWorldQuaternion(new T.Quaternion())};});
  actions.sit_idle.stop();let current=actions.relaxed;current.play();mixer.update(0);
- const speed=.82,authoredSpeed=data.report.find(r=>r.clip==='walk').authoredSpeedMps,backSpeed=.23;actions.walk.timeScale=speed/authoredSpeed;if(actions.walk_back)actions.walk_back.timeScale=backSpeed/(authoredSpeed*.35);
+ const standingFeet=['Left','Right'].map(side=>{const b=bones.get(side+'Foot');actor.updateMatrixWorld(true);return {p:actor.worldToLocal(b.getWorldPosition(V())),q:b.getWorldQuaternion(new T.Quaternion()).premultiply(actor.getWorldQuaternion(new T.Quaternion()).invert())};});
+ const speed=.42,authoredSpeed=data.report.find(r=>r.clip==='walk').authoredSpeedMps,backSpeed=.23;actions.walk.timeScale=speed/authoredSpeed;if(actions.walk_back)actions.walk_back.timeScale=backSpeed/(authoredSpeed*.35);
  const people={mira:{idle:'relaxed',tempo:.92,wave:'greet',pour:'greet',sing:'talk'},hana:{idle:'idle',tempo:.64,wave:'relaxed',pour:'greet',sing:'relaxed'},lin:{idle:'idle',tempo:.48,wave:'talk',pour:'talk',sing:'talk'},yue:{idle:'talk',tempo:1.36,wave:'greet',pour:'talk',sing:'greet'}};
- let person=people.mira,action=null,phase='idle',posture='standing',phaseTime=0,seatedAmount=0,speaking=false,listening=false,paused=false,callback=null,plan=[],stage=null,interruption=null,total=0,comfort=0,footPins=null,blockedMoves=0,maxFootReachError=0,lifeStand=1,lifeSit=0,armLife=.66,walkLife=0,armPhase=0,armCarry=0;const carried=new Map();
+ let person=people.mira,action=null,phase='idle',posture='standing',phaseTime=0,seatedAmount=0,speaking=false,listening=false,paused=false,callback=null,plan=[],stage=null,interruption=null,total=0,comfort=0,footPins=null,blockedMoves=0,maxFootReachError=0,lifeStand=1,lifeSit=0,armLife=.66,walkLife=0,armPhase=0,armCarry=0,gaitDistance=0;const carried=new Map();
  const restored=new Map();const restore=()=>{for(const[b,s]of restored){b.quaternion.copy(s.q);b.position.copy(s.p);}restored.clear();};
  const spin=(bone,axis,angle)=>{if(bone&&Math.abs(angle)>1e-5){bone.quaternion.multiply(new T.Quaternion().setFromAxisAngle(axis,angle));bone.updateWorldMatrix(false,true);}};
- const choose=(name,fade=.3)=>{const a=actions[name];if(current===a)return;a.reset().setEffectiveWeight(1).fadeIn(fade).play();current.fadeOut(fade);current=a;};
+ const choose=(name,fade=.3)=>{const a=actions[name]||actions.relaxed;if(current===a)return;a.reset().setEffectiveWeight(1).fadeIn(fade).play();current.fadeOut(fade);current=a;};
  function idleName(){return posture==='seated'?'sit_idle':person.idle;}
  function next(){stage=plan.shift();phaseTime=stage?.elapsed||0;if(!stage){action=null;phase=posture==='seated'?'seated':'idle';choose(idleName());const cb=callback;callback=null;cb?.();return;}phase=stage.kind;stage.start=actor.rotation.y;
   if(stage.kind==='orient'&&stage.dest){const delta=stage.dest.clone().sub(actor.position);stage.yaw=Math.atan2(delta.x,delta.z)+(stage.backwards?Math.PI:0);}
@@ -43,8 +44,16 @@ export function createSalonPerformance(root,actor,data,{camera,seatY,onView,sofa
   if(stage.kind==='rise'){stage.origin??=actor.position.clone();choose('sit_exit',.24);}
   if(stage.kind==='gesture')choose(stage.clip||'relaxed');
  }
- function navigation(dest,finalYaw=0,backwards=false){return [{kind:'walk',dest,backwards,finalYaw}];}
- function hitsSofa(p){if(!sofaBounds)return false;const x=T.MathUtils.clamp(p.x,sofaBounds.min.x,sofaBounds.max.x),z=T.MathUtils.clamp(p.z,sofaBounds.min.z,sofaBounds.max.z);return Math.hypot(p.x-x,p.z-z)<.12;}
+ function navigation(dest,finalYaw=0,backwards=false){return [{kind:'orient',dest,backwards,duration:.5},{kind:'walk',dest,backwards,finalYaw},{kind:'orient',yaw:finalYaw,duration:.4}];}
+ function hitsSofa(p){
+  const intersects=(box,r)=>{const x=T.MathUtils.clamp(p.x,box.min.x,box.max.x),z=T.MathUtils.clamp(p.z,box.min.z,box.max.z);return Math.hypot(p.x-x,p.z-z)<r;};
+  if(obstacles.some(box=>intersects(box,.22)))return true;
+  if(!sofaBounds)return false;
+  const seating=(action==='sit'||action==='drink')&&stage?.backwards&&Math.abs(p.x-preSeat.x)<.08&&p.z>=preSeat.z;
+  const distance=position=>Math.hypot(position.x-T.MathUtils.clamp(position.x,sofaBounds.min.x,sofaBounds.max.x),position.z-T.MathUtils.clamp(position.z,sofaBounds.min.z,sofaBounds.max.z));
+  const exiting=distance(p)>distance(actor.position)+.0001;
+  return !seating&&!exiting&&intersects(sofaBounds,.22);
+ }
 
  // Enter lands on standing idle at home, facing the camera. From there:
  // approach, stepback, beside, stand, pour and sing turn, walk, then an optional gesture, then idle.
@@ -55,7 +64,7 @@ export function createSalonPerformance(root,actor,data,{camera,seatY,onView,sofa
   if(!['approach','stepback','beside','sit','stand','comfort','wave','pour','drink','sing'].includes(id))return false;
   if(paused){paused=false;mixer.timeScale=1;}
   action=id;callback=done;plan=[];
-  if(interruption){plan.push(interruption);posture=interruption.kind==='sit'?'seated':'standing';interruption=null;}
+  if(interruption){plan.push(interruption);interruption=null;}
   if(id==='pour'||id==='sing'){
    if(posture==='seated')plan.push({kind:'rise'});
    const dest=id==='pour'?V(.55,0,-.55):V(-.2,0,-1.15);
@@ -79,11 +88,11 @@ export function createSalonPerformance(root,actor,data,{camera,seatY,onView,sofa
   }
   next();return true;
  }
- function stop(){paused=false;mixer.timeScale=1;interruption=null;callback=null;plan=[];action=null;stage=null;if(posture!=='seated'){posture='standing';seatedAmount=0;}phase=posture==='seated'?'seated':'idle';choose(idleName());}
+ function stop(){if(phase==='sit'||phase==='rise'){paused=true;mixer.timeScale=0;interruption={...stage,elapsed:phaseTime};callback=null;plan=[];action=null;return;}paused=false;mixer.timeScale=1;interruption=null;callback=null;plan=[];action=null;stage=null;if(posture!=='seated'){posture='standing';seatedAmount=0;}phase=posture==='seated'?'seated':'idle';choose(idleName());}
  function update(dt){if(paused)return;restore();total+=dt;let pace=1;
   if(stage&&action){phaseTime+=dt;
    if(stage.kind==='orient'){choose(posture==='seated'?'sit_idle':'relaxed');const delta=wrap(stage.yaw-stage.start);actor.rotation.y=stage.start+delta*smooth(phaseTime/stage.duration);if(phaseTime>=stage.duration)next();}
-   else if(stage.kind==='walk'){const delta=stage.dest.clone().sub(actor.position);delta.y=0;const dist=delta.length();const travelYaw=Math.atan2(delta.x,delta.z)+(stage.backwards?Math.PI:0);const face=dist>.2?travelYaw:(Number.isFinite(stage.finalYaw)?stage.finalYaw:travelYaw);actor.rotation.y+=wrap(face-actor.rotation.y)*(1-Math.exp(-dt*5.5));if(dist<.04){actor.position.x=stage.dest.x;actor.position.z=stage.dest.z;next();}else{const span=Math.max(.08,stage.origin.distanceTo(stage.dest)),u=T.MathUtils.clamp(1-dist/span,0,1);pace=span<.4?1:u<.1?.78+.22*(u/.1):u>.9?.78+.22*((1-u)/.1):1;const candidate=actor.position.clone().addScaledVector(delta.normalize(),Math.min(dist,(stage.backwards?backSpeed:speed)*pace*dt));if(hitsSofa(candidate)){blockedMoves++;if(dist<.4){next();}else stop();}else actor.position.copy(candidate);}}
+   else if(stage.kind==='walk'){const delta=stage.dest.clone().sub(actor.position);delta.y=0;const dist=delta.length();const travelYaw=Math.atan2(delta.x,delta.z)+(stage.backwards?Math.PI:0);const face=travelYaw;actor.rotation.y+=wrap(face-actor.rotation.y)*(1-Math.exp(-dt*5.5));if(dist<.04){actor.position.x=stage.dest.x;actor.position.z=stage.dest.z;next();}else{const span=Math.max(.08,stage.origin.distanceTo(stage.dest)),u=T.MathUtils.clamp(1-dist/span,0,1);pace=span<.4?1:u<.1?.78+.22*(u/.1):u>.9?.78+.22*((1-u)/.1):1;const candidate=actor.position.clone().addScaledVector(delta.normalize(),Math.min(dist,(stage.backwards?backSpeed:speed)*pace*dt));if(hitsSofa(candidate)){blockedMoves++;stop();}else {gaitDistance+=actor.position.distanceTo(candidate);actor.position.copy(candidate);}}}
    else if(stage.kind==='sit'){seatedAmount=smooth(phaseTime/actions.sit_enter.getClip().duration);actor.position.x=T.MathUtils.lerp(stage.origin.x,seat.x,seatedAmount);actor.position.z=T.MathUtils.lerp(stage.origin.z,seat.z,seatedAmount);if(seatedAmount>=1){posture='seated';next();}}
    else if(stage.kind==='rise'){seatedAmount=1-smooth(phaseTime/actions.sit_exit.getClip().duration);actor.position.x=T.MathUtils.lerp(preSeat.x,stage.origin.x,seatedAmount);actor.position.z=T.MathUtils.lerp(preSeat.z,stage.origin.z,seatedAmount);if(seatedAmount<=0){posture='standing';footPins=null;next();}}
    else if(phaseTime>=stage.duration)next();
@@ -135,17 +144,25 @@ export function createSalonPerformance(root,actor,data,{camera,seatY,onView,sofa
    spin(bones.get('RightShoulder'),V(1,0,0),w*-(.025+.01*breath));
    spin(bones.get('neck'),V(0,0,1),w*-.03);
   }
-  if(stableRig&&walkLife>.02){
-   const travel=stage?.origin?stage.origin.distanceTo(actor.position):total*.7;
-   const step=Math.sin(travel*8.2),w=walkLife;
-   spin(bones.get('LeftUpLeg'),V(1,0,0),w*step*.72);
-   spin(bones.get('RightUpLeg'),V(1,0,0),w*-step*.72);
-   spin(bones.get('LeftLeg'),V(1,0,0),w*Math.max(0,-step)*.95);
-   spin(bones.get('RightLeg'),V(1,0,0),w*Math.max(0,step)*.95);
-   spin(bones.get('LeftFoot'),V(1,0,0),w*Math.max(0,step)*.35);
-   spin(bones.get('RightFoot'),V(1,0,0),w*Math.max(0,-step)*.35);
-   spin(bones.get('LeftArm'),V(1,0,0),w*-step*.35);
-   spin(bones.get('RightArm'),V(1,0,0),w*step*.35);
+  if(stableRig&&walkLife>.002){
+   // World-space feet avoid assuming the exported rig's local rotation axes.
+   // One half-cycle is planted: its backward speed matches actor translation.
+   const stride=.50,direction=stage?.backwards?-1:1;
+   for(let side=0;side<2;side++){
+    const chain=['UpLeg','Leg','Foot'].map(n=>bones.get((side?'Right':'Left')+n));
+    if(chain.some(b=>!b))continue;
+    const [a,b,c]=chain,rest=standingFeet[side];
+    const u=T.MathUtils.euclideanModulo(gaitDistance/stride+side*.5,1);
+    const swing=u>=.5,t=swing?(u-.5)*2:u*2;
+    const z=swing?T.MathUtils.lerp(-stride/4,stride/4,smooth(t)):T.MathUtils.lerp(stride/4,-stride/4,t);
+    const target=actor.localToWorld(rest.p.clone().add(V(0,swing?Math.sin(t*Math.PI)*.045:0,z*direction)));
+    const pole=actor.localToWorld(V(rest.p.x,.55,rest.p.z+.5));
+    actor.updateMatrixWorld(true);
+    const solution=solveJoint(a.getWorldPosition(V()),b.getWorldPosition(V()),c.getWorldPosition(V()),target,pole);
+    if(solution){aimBone(a,b,solution.joint,walkLife);aimBone(b,c,solution.end,walkLife);}
+    const q=actor.getWorldQuaternion(new T.Quaternion()).multiply(rest.q);
+    c.quaternion.slerp(c.parent.getWorldQuaternion(new T.Quaternion()).invert().multiply(q),walkLife);
+   }
   }
   if(stableRig&&posture==='standing'&&phase!=='walk'&&phase!=='gesture'){
    const s=Math.sin(total*(speaking||listening?2.4:1.2));
@@ -243,7 +260,8 @@ export function createSalonPerformance(root,actor,data,{camera,seatY,onView,sofa
    aimBone(head,tip,target,gazeWeight);
    }
   }
-  if(!stableRig)for(let side=0;side<2;side++){
+  for(let side=0;side<2;side++){
+   if(!sensors.feet[side].length)continue;
    const chain=['UpLeg','Leg','Foot'].map(n=>bones.get((side?'Right':'Left')+n));if(chain.some(x=>!x))continue;actor.updateMatrixWorld(true);
    const [a,b,c]=chain,A=a.getWorldPosition(new T.Vector3()),B=b.getWorldPosition(new T.Vector3()),C=c.getWorldPosition(new T.Vector3());let target,q;
    if(footPins){const blend=smooth(seatedAmount/.35),gap=Math.min(...sensors.feet[side].map(s=>point(s).y))-.018;const floorTarget=C.clone().add(V(0,T.MathUtils.clamp(-gap,0,.08),0));target=floorTarget.lerp(footPins[side].from.clone().lerp(footPins[side].p,smooth(seatedAmount/.4)),blend);q=c.getWorldQuaternion(new T.Quaternion()).slerp(footPins[side].q,blend);maxFootReachError=Math.max(maxFootReachError,Math.max(0,A.distanceTo(target)-A.distanceTo(B)-B.distanceTo(C)));}
@@ -252,9 +270,23 @@ export function createSalonPerformance(root,actor,data,{camera,seatY,onView,sofa
   }
 
   const hip=bones.get('Hips');if(hip){const p=actor.worldToLocal(hip.getWorldPosition(V()));const pins={'host-apron':[0,0,0,0],'host-necklace':[0,.4,.08,1.15]};for(const [name,o]of Object.entries(pins)){const prop=actor.getObjectByName(name);if(prop){prop.position.set(p.x+o[0],p.y+o[1],p.z+o[2]);prop.rotation.set(o[3],0,0);}}}
-  // Preserve the authored hand pose. The removed XY-front projection mistook
-  // separate depths for intersections and pushed wrists up to 18 cm per frame.
-  // This rig has no cloth solver: do not claim those corrections were collision physics.
+  // Bounded torso clearance for wrists; garment simulation still requires asset work.
+  if(stableRig){
+   const chest=bones.get('Spine01'),hips=bones.get('Hips');
+   if(chest&&hips)for(const side of ['Left','Right']){
+    const [a,b,c]=['Arm','ForeArm','Hand'].map(n=>bones.get(side+n));if(!a||!b||!c)continue;
+    actor.updateMatrixWorld(true);
+    const h=actor.worldToLocal(hips.getWorldPosition(V())),top=actor.worldToLocal(chest.getWorldPosition(V()));
+    const center=h.clone().lerp(top,.55),hand=actor.worldToLocal(c.getWorldPosition(V())),d=hand.clone().sub(center);
+    const radius=V(.23,Math.max(.24,Math.abs(top.y-h.y)*.8),.19);
+    const norm=d.clone().divide(radius),length=norm.length();
+    if(length>=1||length<.001)continue;
+    const correction=norm.normalize().multiply(radius).add(center).sub(hand).clampLength(0,.025);
+    const target=actor.localToWorld(hand.add(correction)),A=a.getWorldPosition(V()),B=b.getWorldPosition(V()),C=c.getWorldPosition(V());
+    const solution=solveJoint(A,B,C,target,B.clone());
+    if(solution){aimBone(a,b,solution.joint);aimBone(b,c,solution.end);}
+   }
+  }
 
 
 

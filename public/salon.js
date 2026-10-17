@@ -1,6 +1,6 @@
 import {createHostWheel} from './host-wheel.js?v=1';
 let hostWheel=null;
- import {createSalon} from './salon-scene.js?v=89';
+ import {createSalon} from './salon-scene.js?v=90';
 import {createSoundscape} from './salon-audio.js?v=21';
 const API_BASE=(window.NO7_CONFIG?.apiBase||'').replace(/\/$/,'');
 const STATIC_SITE=location.hostname.endsWith('.github.io');

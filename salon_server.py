@@ -14,8 +14,8 @@ PORT=int(os.environ.get('PORT','4328'))
 BIND=os.environ.get('BIND_HOST','127.0.0.1')
 ALLOWED_ORIGINS={x.strip() for x in os.environ.get('ALLOWED_ORIGINS','').split(',') if x.strip()}
 VOICES={'warm':'EXAVITQu4vr4xnSDxMaL','soft':'EXAVITQu4vr4xnSDxMaL','intimate':'XrExE9yKIg1WjnnlVkGX','playful':'cgSgspJ2msm6clMCkdW9'}
-HOST_SPEECH={'mira':{'voice':'XrExE9yKIg1WjnnlVkGX','open':'[softly] [warmly]','aside':'[whispers]'},'hana':{'voice':'EXAVITQu4vr4xnSDxMaL','open':'[softly] [calm]','aside':None},'lin':{'voice':'XB0fDUnXU5powFXDhCwa','open':'','aside':None},'yue':{'voice':'cgSgspJ2msm6clMCkdW9','open':'[excited]','aside':'[mischievously]'}}
-GUEST_SPEECH={'low':{'voice':'XrExE9yKIg1WjnnlVkGX','open':'[softly] [warmly]','aside':'[whispers]'},'soft':{'voice':'EXAVITQu4vr4xnSDxMaL','open':'[softly] [calm]','aside':None},'dry':{'voice':'XB0fDUnXU5powFXDhCwa','open':'','aside':None},'bright':{'voice':'cgSgspJ2msm6clMCkdW9','open':'[excited]','aside':'[mischievously]'}}
+HOST_SPEECH={'mira':{'voice':'XrExE9yKIg1WjnnlVkGX','open':'[softly] [warmly]','aside':'[whispers]'},'hana':{'voice':'EXAVITQu4vr4xnSDxMaL','open':'[softly] [whispers]','aside':None},'lin':{'voice':'XB0fDUnXU5powFXDhCwa','open':'[softly] [warmly]','aside':None},'yue':{'voice':'cgSgspJ2msm6clMCkdW9','open':'[softly] [mischievously]','aside':'[mischievously]'}}
+GUEST_SPEECH={'low':{'voice':'XrExE9yKIg1WjnnlVkGX','open':'[softly] [warmly]','aside':'[whispers]'},'soft':{'voice':'EXAVITQu4vr4xnSDxMaL','open':'[softly] [whispers]','aside':None},'dry':{'voice':'XB0fDUnXU5powFXDhCwa','open':'[softly] [warmly]','aside':None},'bright':{'voice':'cgSgspJ2msm6clMCkdW9','open':'[softly] [mischievously]','aside':'[mischievously]'}}
 LOCK=threading.Lock();SPEECH_LOCK=threading.Lock();COUNTS=collections.Counter();LAST=collections.defaultdict(list);TRANSPORT=media.CurlTransport(PRIVATE)
 def configured():
  try:media.load_credentials();return True
