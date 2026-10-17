@@ -1,0 +1,335 @@
+{
+  "stage": "S01_unity_interchange",
+  "status": "exported_not_engine_validated",
+  "changes": [
+    "Export source skeleton and bind weights to FBX. Preserve textures and source proportions.",
+    "No Three.js retargeted rotation tracks are imported into this experiment."
+  ],
+  "assets": [
+    {
+      "source": "/Users/arthen01/no7-after-hours/public/assets/hosts/mira.glb",
+      "sha256": "e012eb8f2b6c932ed3e30c8330e6ad5e116922c74ce90aa7404c7d3c8abe55ff",
+      "fbx": "unity/No7CharacterLab/Assets/Characters/Mira.fbx",
+      "meshes": 2,
+      "triangles": 309199,
+      "bones": [
+        "Hips",
+        "Spine02",
+        "Spine01",
+        "Spine",
+        "neck",
+        "Head",
+        "head_end",
+        "headfront",
+        "LeftShoulder",
+        "LeftArm",
+        "LeftForeArm",
+        "LeftHand",
+        "RightShoulder",
+        "RightArm",
+        "RightForeArm",
+        "RightHand",
+        "LeftUpLeg",
+        "LeftLeg",
+        "LeftFoot",
+        "LeftToeBase",
+        "RightUpLeg",
+        "RightLeg",
+        "RightFoot",
+        "RightToeBase"
+      ],
+      "scale": [
+        [
+          0.009999999776482582,
+          0.009999999776482582,
+          0.009999999776482582
+        ]
+      ],
+      "height_m": 2.71999990940094,
+      "actions": []
+    },
+    {
+      "source": "/Users/arthen01/worlds-slg-demo/production/host-v41/library/m2mr-stand/mixamo_character.glb",
+      "sha256": "d539be2253b96d4f9ff4f5b261e862badee82ec72511abe217081151ff8ccf7d",
+      "fbx": "unity/No7CharacterLab/Assets/Motions/stand.fbx",
+      "meshes": 2,
+      "triangles": 102815,
+      "bones": [
+        "mixamorig:Hips",
+        "mixamorig:Spine",
+        "mixamorig:Spine1",
+        "mixamorig:Spine2",
+        "mixamorig:Neck",
+        "mixamorig:Head",
+        "mixamorig:HeadTop_End",
+        "headfront",
+        "mixamorig:LeftShoulder",
+        "mixamorig:LeftArm",
+        "mixamorig:LeftForeArm",
+        "mixamorig:LeftHand",
+        "mixamorig:RightShoulder",
+        "mixamorig:RightArm",
+        "mixamorig:RightForeArm",
+        "mixamorig:RightHand",
+        "mixamorig:LeftUpLeg",
+        "mixamorig:LeftLeg",
+        "mixamorig:LeftFoot",
+        "mixamorig:LeftToeBase",
+        "mixamorig:LeftToe_End",
+        "mixamorig:RightUpLeg",
+        "mixamorig:RightLeg",
+        "mixamorig:RightFoot",
+        "mixamorig:RightToeBase",
+        "mixamorig:RightToe_End"
+      ],
+      "scale": [
+        [
+          1.0,
+          1.0,
+          1.0
+        ]
+      ],
+      "height_m": 2.6719385385513306,
+      "actions": [
+        "mixamo_clip"
+      ]
+    },
+    {
+      "source": "/Users/arthen01/worlds-slg-demo/production/host-v41/library/m2mr-sit/mixamo_character.glb",
+      "sha256": "8b01696f9bc910171e89deb1f62e07fc5659faf60e7b5966c3ac9bfb8d9a82f3",
+      "fbx": "unity/No7CharacterLab/Assets/Motions/sit.fbx",
+      "meshes": 2,
+      "triangles": 102815,
+      "bones": [
+        "mixamorig:Hips",
+        "mixamorig:Spine",
+        "mixamorig:Spine1",
+        "mixamorig:Spine2",
+        "mixamorig:Neck",
+        "mixamorig:Head",
+        "mixamorig:HeadTop_End",
+        "headfront",
+        "mixamorig:LeftShoulder",
+        "mixamorig:LeftArm",
+        "mixamorig:LeftForeArm",
+        "mixamorig:LeftHand",
+        "mixamorig:RightShoulder",
+        "mixamorig:RightArm",
+        "mixamorig:RightForeArm",
+        "mixamorig:RightHand",
+        "mixamorig:LeftUpLeg",
+        "mixamorig:LeftLeg",
+        "mixamorig:LeftFoot",
+        "mixamorig:LeftToeBase",
+        "mixamorig:LeftToe_End",
+        "mixamorig:RightUpLeg",
+        "mixamorig:RightLeg",
+        "mixamorig:RightFoot",
+        "mixamorig:RightToeBase",
+        "mixamorig:RightToe_End"
+      ],
+      "scale": [
+        [
+          1.0,
+          1.0,
+          1.0
+        ]
+      ],
+      "height_m": 2.65999972820282,
+      "actions": [
+        "mixamo_clip"
+      ]
+    },
+    {
+      "source": "/Users/arthen01/worlds-slg-demo/production/host-v41/library/m2mr-rise/mixamo_character.glb",
+      "sha256": "e4958b6b86e40031e298201e159743ec73fee0f87e1f6b15079be6aee65bac29",
+      "fbx": "unity/No7CharacterLab/Assets/Motions/rise.fbx",
+      "meshes": 2,
+      "triangles": 102815,
+      "bones": [
+        "mixamorig:Hips",
+        "mixamorig:Spine",
+        "mixamorig:Spine1",
+        "mixamorig:Spine2",
+        "mixamorig:Neck",
+        "mixamorig:Head",
+        "mixamorig:HeadTop_End",
+        "headfront",
+        "mixamorig:LeftShoulder",
+        "mixamorig:LeftArm",
+        "mixamorig:LeftForeArm",
+        "mixamorig:LeftHand",
+        "mixamorig:RightShoulder",
+        "mixamorig:RightArm",
+        "mixamorig:RightForeArm",
+        "mixamorig:RightHand",
+        "mixamorig:LeftUpLeg",
+        "mixamorig:LeftLeg",
+        "mixamorig:LeftFoot",
+        "mixamorig:LeftToeBase",
+        "mixamorig:LeftToe_End",
+        "mixamorig:RightUpLeg",
+        "mixamorig:RightLeg",
+        "mixamorig:RightFoot",
+        "mixamorig:RightToeBase",
+        "mixamorig:RightToe_End"
+      ],
+      "scale": [
+        [
+          1.0,
+          1.0,
+          1.0
+        ]
+      ],
+      "height_m": 2.7131154537200928,
+      "actions": [
+        "mixamo_clip"
+      ]
+    },
+    {
+      "source": "/Users/arthen01/worlds-slg-demo/production/host-v41/library/m2mr-wave/mixamo_character.glb",
+      "sha256": "e4f6a8d989e4b4292d87a72e3384b07c6b827b21c0cbabd967aabfe317f992cb",
+      "fbx": "unity/No7CharacterLab/Assets/Motions/wave.fbx",
+      "meshes": 2,
+      "triangles": 102815,
+      "bones": [
+        "mixamorig:Hips",
+        "mixamorig:Spine",
+        "mixamorig:Spine1",
+        "mixamorig:Spine2",
+        "mixamorig:Neck",
+        "mixamorig:Head",
+        "mixamorig:HeadTop_End",
+        "headfront",
+        "mixamorig:LeftShoulder",
+        "mixamorig:LeftArm",
+        "mixamorig:LeftForeArm",
+        "mixamorig:LeftHand",
+        "mixamorig:RightShoulder",
+        "mixamorig:RightArm",
+        "mixamorig:RightForeArm",
+        "mixamorig:RightHand",
+        "mixamorig:LeftUpLeg",
+        "mixamorig:LeftLeg",
+        "mixamorig:LeftFoot",
+        "mixamorig:LeftToeBase",
+        "mixamorig:LeftToe_End",
+        "mixamorig:RightUpLeg",
+        "mixamorig:RightLeg",
+        "mixamorig:RightFoot",
+        "mixamorig:RightToeBase",
+        "mixamorig:RightToe_End"
+      ],
+      "scale": [
+        [
+          1.0,
+          1.0,
+          1.0
+        ]
+      ],
+      "height_m": 2.6529922485351562,
+      "actions": [
+        "mixamo_clip"
+      ]
+    },
+    {
+      "source": "/Users/arthen01/worlds-slg-demo/production/host-v41/library/m2mr-pour/mixamo_character.glb",
+      "sha256": "cf7a460fb9417d5ebd0be54b16c1b77045521e31327add11025f1d443690f5b2",
+      "fbx": "unity/No7CharacterLab/Assets/Motions/pour.fbx",
+      "meshes": 2,
+      "triangles": 102815,
+      "bones": [
+        "mixamorig:Hips",
+        "mixamorig:Spine",
+        "mixamorig:Spine1",
+        "mixamorig:Spine2",
+        "mixamorig:Neck",
+        "mixamorig:Head",
+        "mixamorig:HeadTop_End",
+        "headfront",
+        "mixamorig:LeftShoulder",
+        "mixamorig:LeftArm",
+        "mixamorig:LeftForeArm",
+        "mixamorig:LeftHand",
+        "mixamorig:RightShoulder",
+        "mixamorig:RightArm",
+        "mixamorig:RightForeArm",
+        "mixamorig:RightHand",
+        "mixamorig:LeftUpLeg",
+        "mixamorig:LeftLeg",
+        "mixamorig:LeftFoot",
+        "mixamorig:LeftToeBase",
+        "mixamorig:LeftToe_End",
+        "mixamorig:RightUpLeg",
+        "mixamorig:RightLeg",
+        "mixamorig:RightFoot",
+        "mixamorig:RightToeBase",
+        "mixamorig:RightToe_End"
+      ],
+      "scale": [
+        [
+          1.0,
+          1.0,
+          1.0
+        ]
+      ],
+      "height_m": 2.6359673738479614,
+      "actions": [
+        "mixamo_clip"
+      ]
+    },
+    {
+      "source": "/Users/arthen01/worlds-slg-demo/production/host-v41/library/m2mr-sing/mixamo_character.glb",
+      "sha256": "1d95b7c495aba1a399550b19028419ff803a82819748788c1b3d333f70cba2e7",
+      "fbx": "unity/No7CharacterLab/Assets/Motions/sing.fbx",
+      "meshes": 2,
+      "triangles": 102815,
+      "bones": [
+        "mixamorig:Hips",
+        "mixamorig:Spine",
+        "mixamorig:Spine1",
+        "mixamorig:Spine2",
+        "mixamorig:Neck",
+        "mixamorig:Head",
+        "mixamorig:HeadTop_End",
+        "headfront",
+        "mixamorig:LeftShoulder",
+        "mixamorig:LeftArm",
+        "mixamorig:LeftForeArm",
+        "mixamorig:LeftHand",
+        "mixamorig:RightShoulder",
+        "mixamorig:RightArm",
+        "mixamorig:RightForeArm",
+        "mixamorig:RightHand",
+        "mixamorig:LeftUpLeg",
+        "mixamorig:LeftLeg",
+        "mixamorig:LeftFoot",
+        "mixamorig:LeftToeBase",
+        "mixamorig:LeftToe_End",
+        "mixamorig:RightUpLeg",
+        "mixamorig:RightLeg",
+        "mixamorig:RightFoot",
+        "mixamorig:RightToeBase",
+        "mixamorig:RightToe_End"
+      ],
+      "scale": [
+        [
+          1.0,
+          1.0,
+          1.0
+        ]
+      ],
+      "height_m": 2.6545302867889404,
+      "actions": [
+        "mixamo_clip"
+      ]
+    }
+  ],
+  "unity_import": "not_run",
+  "deformation_repair": "not_run",
+  "unresolved": [
+    "Combined body/garment mesh; no separate cloth surface.",
+    "Unity Humanoid mapping and T-pose need editor import.",
+    "Full motion and collision review not run."
+  ]
+}

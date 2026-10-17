@@ -1,0 +1,8 @@
+{
+  "source": "/Users/arthen01/worlds-slg-demo/public/assets/mira-walk.glb",
+  "sha256": "0b343ce8bafa857f18ef1ac7ef5ef0a3dd858c3065cdfa70ae1a38820801c748",
+  "output": "unity/No7CharacterLab/Assets/Motions/walk.fbx",
+  "skeleton": "Meshy: Hips > Spine02 > Spine01 > Spine",
+  "use": "Animation donor only, retarget to Mira Avatar",
+  "status": "exported_not_engine_validated"
+}

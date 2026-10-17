@@ -11,3 +11,17 @@ production/service-runtime/
 !/public/audio/ambience/**
 
 /dist/
+
+# Local Unity prototype exports and editor caches
+unity/**/Library/
+unity/**/Temp/
+unity/**/Obj/
+unity/**/Logs/
+unity/**/UserSettings/
+unity/**/Builds/
+unity/**/Assets/Characters/
+unity/**/Assets/Motions/
+unity/**/Assets/Generated/
+unity/**/Assets/Scenes/
+production/unity-pilot/stages/*.blend*
+production/unity-pilot/*.log

@@ -4,3 +4,6 @@ production/service-runtime
 public/audio/*.mp3
 public/audio/*.wav
 dist
+
+unity
+production/unity-pilot

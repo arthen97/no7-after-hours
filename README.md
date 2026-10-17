@@ -38,3 +38,7 @@ Mira's restored cover is the original Grok Imagine Image 2.0 output from
 `worlds-slg-demo/production/host-v39/posters/run-mira/artifacts/mira.jpg`.
 
 For Menv or another Node host, use `npm start` (Node 20+). This serves the game and its API together. The service accepts `PORT`, `MEROUTER_SERVICE_KEY` / `MEROUTER_API_KEY`, and `ALLOWED_ORIGINS`.
+
+## Unity character experiment
+
+The local `unity/No7CharacterLab` project contains source for a Mira Humanoid motion lab. See its README for exported assets and storage requirements. **Editor import, compilation and Web build are pending; the public game still uses Three.js.** Large experimental asset exports remain local and are excluded from deployment.
