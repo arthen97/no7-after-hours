@@ -4,7 +4,7 @@ A late-night private karaoke room game with interactive Three.js characters, 3D 
 
 ## Play online
 
-Open <https://arthen97.github.io/no7-after-hours/>. The public web version runs in the browser—no download, install, account, or API key is needed. Choose a host, enter the room, use the movement controls, and send lines for story-mode replies. Room ambience and optional browser speech are included.
+Open <https://arthen97.github.io/no7-after-hours/>. The public web version runs in the browser—no download, install, account, or API key is needed. Choose a host, enter the room, use the movement controls, and send lines for story-mode replies. Room ambience is included. Voice uses the connected Merouter service.
 
 The public Pages version uses authored story replies when no backend is configured. The local Python server remains available for Merouter-powered chat and generated voices; configure its key in your environment and never put it in the public repository.
 
@@ -36,3 +36,5 @@ remain available.
 
 Mira's restored cover is the original Grok Imagine Image 2.0 output from
 `worlds-slg-demo/production/host-v39/posters/run-mira/artifacts/mira.jpg`.
+
+For Menv or another Node host, use `npm start` (Node 20+). This serves the game and its API together. The service accepts `PORT`, `MEROUTER_SERVICE_KEY` / `MEROUTER_API_KEY`, and `ALLOWED_ORIGINS`.
