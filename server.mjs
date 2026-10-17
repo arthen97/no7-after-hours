@@ -16,7 +16,7 @@ async function speech(d){
  const delivery=d.emotion==='reassuring'?'[softly] [warmly]':({mira:'[softly] [warmly]',hana:'[softly] [whispers]',lin:'[softly] [warmly]',yue:'[softly] [mischievously]'}[d.host]||'[softly] [warmly]');
  const input=delivery+' '+clean;
  const voice=d.host==='guest'?guestVoices[d.voice]:voices[d.host];if(!voice)throw Error('Unknown host voice.');
- const payload={model,voice,input,language:'en',response_format:'mp3'};
+ const payload={model,voice,input,language:/[\u3400-\u9fff]/.test(clean)?'zh':'en',response_format:'mp3'};
  const key=createHash('sha256').update(JSON.stringify(payload)).digest('hex').slice(0,24);
  for(const [id,item]of audio)if(Date.now()-item.created>3600000)audio.delete(id);
  if(audio.has(key))return {url:'/audio/generated/'+key+'.mp3',model,cached:true};
@@ -31,11 +31,11 @@ async function chat(d){
  const tones={mira:'warm, playful and confident',hana:'gentle, intimate, quietly flirtatious',lin:'low, intimate, teasing and unhurried',yue:'soft, playful, flirtatious and musical'};
  const history=Array.isArray(d.history)?d.history.filter(x=>x&&['user','assistant'].includes(x.role)&&typeof x.content==='string').slice(-10).map(x=>({role:x.role,content:x.content.slice(0,600)})):[];
  if(history.at(-1)?.role==='user'&&history.at(-1).content===input)history.pop();
- const r=await upstream('chat/completions',{model:chatModel,max_tokens:240,temperature:.7,messages:[{role:'system',content:`You are ${id}, a fictional adult woman aged 27 in a private karaoke booth. Your tone is ${tones[id]}. Speak natural English, two short sentences. Use intimate, warm, unhurried phrasing and subtle teasing when welcome, never a stiff announcer tone. Respond warmly to distress. Keep flirting non-explicit. Do not claim physical actions have finished; animation is separate. Return only JSON with text and emotion (warm, curious, reassuring or playful).`},...history,{role:'user',content:input}]},'chat');
+ const r=await upstream('chat/completions',{model:chatModel,max_tokens:240,temperature:.7,messages:[{role:'system',content:`You are ${id}, a fictional adult woman aged 27 in a private karaoke booth. Your tone is ${tones[id]}. Reply in the language used by the user (Chinese or English), in two short sentences. Use intimate, warm, unhurried phrasing and subtle teasing when welcome, never a stiff announcer tone. Respond warmly to distress. Keep flirting non-explicit. Do not claim physical actions have finished; animation is separate. Return only JSON with text, emotion (warm, curious, reassuring or playful), and action. Choose action only for an explicit request: sit, stand, wave, approach, stepback, pour, drink, sing or turn. Otherwise action must be null. Never invent unsupported actions.`},...history,{role:'user',content:input}]},'chat');
  const data=await r.json();const raw=data.choices?.[0]?.message?.content||'';
  let reply;try{reply=JSON.parse(raw.replace(/^```(?:json)?\s*|\s*```$/g,''));}catch{throw Error('The reply format was invalid.');}
  if(typeof reply.text!=='string')throw Error('The reply was empty.');
- return {text:reply.text.slice(0,500),emotion:['warm','curious','reassuring','playful'].includes(reply.emotion)?reply.emotion:'warm',source:'live',model:data.model||chatModel};
+ return {text:reply.text.slice(0,500),emotion:['warm','curious','reassuring','playful'].includes(reply.emotion)?reply.emotion:'warm',action:['sit','stand','wave','approach','stepback','pour','drink','sing','turn'].includes(reply.action)?reply.action:null,source:'live',model:data.model||chatModel};
 }
 const types={'.html':'text/html; charset=utf-8','.js':'text/javascript','.css':'text/css','.json':'application/json','.png':'image/png','.jpg':'image/jpeg','.webp':'image/webp','.glb':'model/gltf-binary','.gltf':'model/gltf+json','.bin':'application/octet-stream','.mp3':'audio/mpeg','.wav':'audio/wav'};
 http.createServer(async(req,res)=>{

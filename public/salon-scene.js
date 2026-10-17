@@ -3,7 +3,7 @@ import * as T from './vendor/three.module.js';
 import {GLTFLoader} from './vendor/GLTFLoader.js';
 import {createCinema,addDressing} from './runtime/cinematic-room.js?v=21';
 import {loadRoomAssets} from './runtime/room-assets.js';
-import {loadBlenderRoom} from './runtime/blender-room.js?v=21';
+import {loadBlenderRoom} from './runtime/blender-room.js?v=22';
  import {loadSelectedMira} from './runtime/selected-mira.js?v=90';
 export async function createSalon(container,onStatus){
  const renderer=new T.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});renderer.setPixelRatio(Math.min(devicePixelRatio,1.7));renderer.outputColorSpace=T.SRGBColorSpace;renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;renderer.shadowMap.enabled=true;renderer.shadowMap.type=T.PCFShadowMap;container.append(renderer.domElement);
@@ -31,7 +31,14 @@ export async function createSalon(container,onStatus){
  const key=new T.SpotLight('#ffd0dc',8,12,.7,.85,2);key.position.set(-1.6,2.4,.6);key.target.position.set(0,1,-.6);key.castShadow=true;key.shadow.mapSize.set(1024,1024);key.shadow.normalBias=.006;key.shadow.bias=-.00015;key.shadow.radius=4;scene.add(key,key.target);
  const fill=new T.PointLight('#ff5c98',2.2,7,2);fill.position.set(1.4,1.8,.2);scene.add(fill);const rim=new T.PointLight('#7d5cff',4.5,8,2);rim.position.set(-.2,2.2,-2.2);scene.add(rim);
  const screenMat=new T.MeshStandardMaterial({color:'#140810',emissive:'#ff4d86',emissiveIntensity:.45,roughness:.35});
- const bezel=new T.Mesh(new T.BoxGeometry(1.22,.7,.045),new T.MeshStandardMaterial({color:'#14080e',roughness:.55,metalness:.2}));bezel.position.set(-2.42,1.72,-2.35);bezel.rotation.y=Math.PI/2;scene.add(bezel);
+ const bezel=new T.Mesh(new T.BoxGeometry(1.22,.7,.045),new T.MeshStandardMaterial({color:'#14080e',roughness:.55,metalness:.2}));// Anchor the TV to the imported left wall, including its physical wall mount.
+ blenderRoom.architecture.updateWorldMatrix(true,true);
+ const wallRay=new T.Raycaster(new T.Vector3(0,1.72,-2.35),new T.Vector3(-1,0,0),0,5);
+ const wallHit=wallRay.intersectObject(blenderRoom.architecture,true).find(hit=>hit.object.name.includes('plaster'));
+ if(!wallHit)throw Error('Left wall TV anchor unavailable');
+ const wallX=wallHit.point.x,mountDepth=.065;
+ bezel.name='Left wall mounted television';bezel.position.set(wallX+mountDepth+.0225,1.72,-2.35);bezel.rotation.y=Math.PI/2;bezel.castShadow=bezel.receiveShadow=true;scene.add(bezel);
+ const mount=box(mountDepth,.32,.44,wallX+mountDepth/2,1.72,-2.35,'black');mount.name='TV wall bracket';
  const screen=new T.Mesh(new T.PlaneGeometry(1.08,.56),screenMat);screen.position.set(0,0,.028);screen.castShadow=false;bezel.add(screen);
  const lyricBars=[];for(let i=0;i<5;i++){const bar=new T.Mesh(new T.PlaneGeometry(.82,.012),new T.MeshBasicMaterial({color:i===2?'#ffe4f0':'#ff8ab4',transparent:true,opacity:.9}));bar.position.set(0,.16-i*.08,.01);screen.add(bar);lyricBars.push(bar);}
  const micMat=new T.MeshStandardMaterial({color:'#16161a',metalness:.75,roughness:.28,emissive:'#ff8aaf',emissiveIntensity:.18});
@@ -42,7 +49,7 @@ export async function createSalon(container,onStatus){
  function setLighting(values){for(const name of ['key','fill','rim','warmth','exposure'])if(Number.isFinite(values[name]))lighting[name]=T.MathUtils.clamp(values[name],name==='exposure'?.65:0,name==='warmth'?1:name==='exposure'?1.5:2);key.intensity=10*lighting.key;fill.intensity=1.5*lighting.fill;rim.intensity=3*lighting.rim;ambient.intensity=.18+.1*lighting.fill;key.color.setRGB(1,.62+.12*(1-lighting.warmth),.72);renderer.toneMappingExposure=lighting.exposure;cinema.setLighting(lighting);return {...lighting};}setLighting(lighting);
 
 
- let freeCamera=null,tween=null,total=0,dim=false,intro=false;function view(id){if(freeCamera?.active)return;intro=false;let p,t;if(id==='window'){p=new T.Vector3(-.35,1.55,.55);t=new T.Vector3(-2.05,1.62,-1.35);}else if(id==='together'){p=new T.Vector3(-1.48,1.34,-1.53);t=new T.Vector3(-.72,1.2,-2.28);}else if(id==='sofa'){p=new T.Vector3(.15,1.48,.35);t=new T.Vector3(-.76,.83,-2.35);}else if(id==='beside'){p=new T.Vector3(-.20,1.58,1.9);t=new T.Vector3(.48,1.15,.32);}else if(id==='close'){const a=actor.position;p=new T.Vector3(a.x,1.58,a.z+.92);t=new T.Vector3(a.x,1.52,a.z);}else{p=new T.Vector3(1.6,1.8,3.7);t=new T.Vector3(-.5,1,-1.2);}tween={a:camera.position.clone(),b:p,c:focus.clone(),d:t,t:0};}
+ let freeCamera=null,tween=null,total=0,dim=false,intro=false;function view(id){if(freeCamera?.active)return;intro=false;let p,t;if(id==='window'){p=new T.Vector3(-.35,1.55,.55);t=bezel.position.clone();}else if(id==='together'){p=new T.Vector3(-1.48,1.34,-1.53);t=new T.Vector3(-.72,1.2,-2.28);}else if(id==='sofa'){p=new T.Vector3(.15,1.48,.35);t=new T.Vector3(-.76,.83,-2.35);}else if(id==='beside'){p=new T.Vector3(-.20,1.58,1.9);t=new T.Vector3(.48,1.15,.32);}else if(id==='close'){const a=actor.position;p=new T.Vector3(a.x,1.58,a.z+.92);t=new T.Vector3(a.x,1.52,a.z);}else{p=new T.Vector3(1.6,1.8,3.7);t=new T.Vector3(-.5,1,-1.2);}tween={a:camera.position.clone(),b:p,c:focus.clone(),d:t,t:0};}
  const rooms={mira:{key:1.08,fill:.58,rim:1.15,warmth:.88,exposure:1.02,screen:'#c43a62',bar:'#ffb3c7',pulse:.62},hana:{key:.68,fill:1.05,rim:.42,warmth:.34,exposure:.94,screen:'#efe6d4',bar:'#f7f1e4',pulse:.2},lin:{key:.4,fill:.36,rim:1.5,warmth:.08,exposure:.86,screen:'#3d6ea8',bar:'#9ec4e8',pulse:.14},yue:{key:1.32,fill:.38,rim:1.75,warmth:.58,exposure:1.16,screen:'#e01840',bar:'#ffd0d8',pulse:1.2}};let room=rooms.mira;function applyRoom(id){room=rooms[id]||rooms.mira;if(!dim)setLighting(room);screenMat.emissive.set(room.screen);lyricBars.forEach((bar,i)=>bar.material.color.set(i===2?'#fff8ee':room.bar));}
  const performances={};let hostId='mira';for(const [id,root] of Object.entries(character.bodies)){root.visible=id==='mira';performances[id]=character.createPerformance(id,root,actor,{camera,seatY,onView:view,sofaBounds:new T.Box3().setFromObject(sofa),obstacles:[new T.Box3().setFromObject(tableTop)]});performances[id].setHost(id);}const active=()=>performances[hostId];function setHost(id){if(!performances[id])return;if(id!==hostId){active().stop();character.bodies[hostId].visible=false;hostId=id;character.bodies[id].visible=true;}active().setHost(id);active().setObserverMode(Boolean(freeCamera?.active));applyRoom(id);}applyRoom('mira');
  freeCamera=createCharacterCamera({camera,focus,actor,scene,canvas:renderer.domElement,takeControl(){tween=null;intro=false;active().setObserverMode(true);}});

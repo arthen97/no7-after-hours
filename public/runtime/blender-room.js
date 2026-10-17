@@ -38,5 +38,5 @@ export async function loadBlenderRoom(scene){
   });rain.instanceMatrix.needsUpdate=true;
  }
  update(0);
- return {update,diagnostics:()=>({version:manifest.version,source:manifest.source_blend,sourceHash:manifest.source_sha256,batches:manifest.batches,rainCount:manifest.rain.length,elapsed,characterImported:false,sofaImported:false,method:'Native Blender geometry and UV export; glass beads, depth-separated city, seeded continuous rainfall'})};
+ return {architecture:room,update,diagnostics:()=>({version:manifest.version,source:manifest.source_blend,sourceHash:manifest.source_sha256,batches:manifest.batches,rainCount:manifest.rain.length,elapsed,characterImported:false,sofaImported:false,method:'Native Blender geometry and UV export; glass beads, depth-separated city, seeded continuous rainfall'})};
 }

@@ -534,3 +534,5 @@ header{height:76px;padding:0 clamp(18px,3vw,42px);background:linear-gradient(#10
 .click-sparks{position:fixed;width:0;height:0;z-index:100;pointer-events:none}.click-sparks i{position:absolute;left:0;top:-1px;width:9px;height:2px;border-radius:2px;background:#ffd3a4;transform-origin:0 50%;box-shadow:0 0 7px #ff9866aa}
 .opening-right>.guest-customizer{grid-column:1/-1}
 @media(prefers-reduced-motion:reduce){.host-wheel-shell .opening-cover{will-change:auto;transform:none!important}.poster-glare,.click-sparks{display:none}}
+
+#voice-input[aria-pressed="true"]{background:#b74768;box-shadow:0 0 0 5px #ed71852a;color:#fff}#voice-live{overflow-wrap:anywhere}#voice-lang:disabled{opacity:.45}
