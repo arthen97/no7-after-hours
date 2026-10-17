@@ -1,6 +1,6 @@
 import * as T from '../vendor/three.module.js';
 import {GLTFLoader} from '../vendor/GLTFLoader.js';
-import {createSalonPerformance} from './salon-performance.js?v=53';
+import {createSalonPerformance} from './salon-performance.js?v=54';
 
 const HOSTS = ['mira', 'hana', 'lin', 'yue'];
 

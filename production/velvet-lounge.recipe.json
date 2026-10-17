@@ -1,0 +1,11 @@
+{
+  "id": "velvet-after-hours-v1",
+  "kind": "music",
+  "endpoint": "/v1/music/generations",
+  "output_basename": "velvet-lounge",
+  "payload": {
+    "model": "eleven-music-v1",
+    "duration": 90,
+    "prompt": "Original instrumental slow contemporary R&B and intimate late-night lounge, 72 BPM with gentle swung sixteenth-note groove. Sultry warm Rhodes electric piano with spacious minor ninth chords, rounded deep bass, dry soft rim-click snare, restrained tight kick, delicate muted guitar answers, very sparse airy analog pad. Confident slow pulse, close and intimate candlelit private lounge, romantic tension, luxurious velvet atmosphere, tasteful and understated. No vocals, no humming, no speech, no lyrics, no saxophone lead, no elevator jazz, no Mandopop ballad, no orchestral strings, no EDM drop. Stable moderate dynamics, gentle eight-bar harmonic development, no big breakdowns. Plenty of silence between phrases for spoken dialogue. Clean stereo mix, bass controlled, gentle intro and outro suitable for looping background game music."
+  }
+}
