@@ -2,7 +2,7 @@
 """Local-only salon demo. Credentials stay in server memory; public files only."""
 from http.server import ThreadingHTTPServer,SimpleHTTPRequestHandler
 from pathlib import Path
-import json,re,time,threading,hashlib,collections,sys
+import json,re,time,threading,hashlib,collections,sys,os
 sys.path.insert(0,str(Path(__file__).parent/'production'))
 import merouter_media as media
 import laya_decider
@@ -10,6 +10,9 @@ ROOT=Path(__file__).parent;PUBLIC=ROOT/'public';PRIVATE=ROOT/'production/service
 # Opus 5.5 writes the spoken line and is the chief engineer for character and room changes.
 # Laya only orders the reflected action and the conversation TTS.
 CHAT_MODEL='claude-opus-5.5';TTS_MODEL='eleven_v4'
+PORT=int(os.environ.get('PORT','4328'))
+BIND=os.environ.get('BIND_HOST','127.0.0.1')
+ALLOWED_ORIGINS={x.strip() for x in os.environ.get('ALLOWED_ORIGINS','').split(',') if x.strip()}
 VOICES={'warm':'EXAVITQu4vr4xnSDxMaL','soft':'EXAVITQu4vr4xnSDxMaL','intimate':'XrExE9yKIg1WjnnlVkGX','playful':'cgSgspJ2msm6clMCkdW9'}
 HOST_SPEECH={'mira':{'voice':'XrExE9yKIg1WjnnlVkGX','open':'[softly] [warmly]','aside':'[whispers]'},'hana':{'voice':'EXAVITQu4vr4xnSDxMaL','open':'[softly] [calm]','aside':None},'lin':{'voice':'XB0fDUnXU5powFXDhCwa','open':'','aside':None},'yue':{'voice':'cgSgspJ2msm6clMCkdW9','open':'[excited]','aside':'[mischievously]'}}
 GUEST_SPEECH={'low':{'voice':'XrExE9yKIg1WjnnlVkGX','open':'[softly] [warmly]','aside':'[whispers]'},'soft':{'voice':'EXAVITQu4vr4xnSDxMaL','open':'[softly] [calm]','aside':None},'dry':{'voice':'XB0fDUnXU5powFXDhCwa','open':'','aside':None},'bright':{'voice':'cgSgspJ2msm6clMCkdW9','open':'[excited]','aside':'[mischievously]'}}
@@ -95,12 +98,20 @@ class Handler(SimpleHTTPRequestHandler):
  def __init__(self,*a,**kw):super().__init__(*a,directory=str(PUBLIC),**kw)
  def log_message(self,*a):pass
  def trusted(self):
-  host=self.headers.get('Host','');return host in ['127.0.0.1:4328','localhost:4328']and self.headers.get('Origin')in [None,'http://'+host]
+  host=self.headers.get('Host','');origin=self.headers.get('Origin')
+  return origin in ALLOWED_ORIGINS or (BIND=='0.0.0.0' and origin in [None,'https://'+host]) or (host in [f'127.0.0.1:{PORT}',f'localhost:{PORT}'] and origin in [None,'http://'+host])
  def reply(self,code,data):
   raw=json.dumps(data,ensure_ascii=False).encode();self.send_response(code);self.send_header('Content-Type','application/json; charset=utf-8');self.send_header('Content-Length',str(len(raw)));self.end_headers()
   try:self.wfile.write(raw)
   except (BrokenPipeError,ConnectionResetError):pass
- def end_headers(self):self.send_header('Cache-Control','no-store');self.send_header('X-Content-Type-Options','nosniff');super().end_headers()
+ def end_headers(self):
+  origin=self.headers.get('Origin')
+  if origin in ALLOWED_ORIGINS:
+   self.send_header('Access-Control-Allow-Origin',origin);self.send_header('Vary','Origin')
+  self.send_header('Cache-Control','no-store');self.send_header('X-Content-Type-Options','nosniff');super().end_headers()
+ def do_OPTIONS(self):
+  if not self.trusted():return self.reply(403,{'error':'Forbidden origin'})
+  self.send_response(204);self.send_header('Access-Control-Allow-Methods','GET, POST, OPTIONS');self.send_header('Access-Control-Allow-Headers','Content-Type');self.end_headers()
  def do_GET(self):
   if not self.trusted():return self.reply(403,{'error':'Forbidden origin'})
   if self.path=='/api/status':return self.reply(200,{'configured':configured(),'chat_model':CHAT_MODEL,'tts_model':TTS_MODEL,'voices':list(VOICES),'calls':dict(COUNTS),'video':'capture_only','decision':laya_decider.status()})
@@ -135,4 +146,4 @@ class Handler(SimpleHTTPRequestHandler):
   finally:request_lock.release()
 if __name__=='__main__':
  threading.Thread(target=laya_decider.initialize,daemon=True).start()
- print('Mira salon: http://127.0.0.1:4328',flush=True);ThreadingHTTPServer(('127.0.0.1',4328),Handler).serve_forever()
+ print('Mira salon: http://127.0.0.1:4328',flush=True);ThreadingHTTPServer((BIND,PORT),Handler).serve_forever()
