@@ -2,7 +2,7 @@ import {createVoiceInput} from './voice-input.js?v=1';
 import {setupNightMotion,transitionPoster} from './night-motion.js?v=1';
 import {createHostWheel} from './host-wheel.js?v=1';
 let hostWheel=null;
- import {createSalon} from './salon-scene.js?v=92';
+ import {createSalon} from './salon-scene.js?v=93';
 import {createSoundscape} from './salon-audio.js?v=22';
 const API_BASE=(window.NO7_CONFIG?.apiBase||'').replace(/\/$/,'');
 const STATIC_SITE=location.hostname.endsWith('.github.io');
@@ -103,3 +103,9 @@ const lightPresets={portrait:{key:1,fill:1.25,rim:.65,warmth:.3,exposure:1.1},ev
 for(const button of document.querySelectorAll('[data-light-preset]'))button.onclick=()=>{world?.setLighting(lightPresets[button.dataset.lightPreset]);syncLighting();};
 
 $('#camera-window').onclick=()=>world?.cinematicView('window');
+
+function screenLabel(state){if(!state)return;$('#ktv-now').textContent=state.failed?'Screen artwork could not load. Reload to try again.':state.loaded?state.title+' · '+(state.paused?'paused':'12-second rotation'):'Loading Grok nightlife posters…';$('#ktv-pause').textContent=state.paused?'Play posters':'Pause posters';$('#ktv-pause').setAttribute('aria-pressed',String(state.paused));}
+$('#ktv-pause').onclick=()=>screenLabel(world?.toggleScreen());
+$('#ktv-next').onclick=()=>screenLabel(world?.nextScreen());
+$('#disco-toggle').onclick=()=>{if(!world)return;const enabled=world.toggleDisco();$('#disco-toggle').textContent='Mirror ball · '+(enabled?'on':'off');$('#disco-toggle').setAttribute('aria-pressed',String(enabled));};
+const openAudioSettings=$('#settings-toggle').onclick;$('#settings-toggle').onclick=()=>{openAudioSettings();screenLabel(world?.diagnostics().ktvScreen);};

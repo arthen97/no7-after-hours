@@ -1,0 +1,12 @@
+{
+  "id": "ktv-velvet-revue-v1",
+  "kind": "image",
+  "endpoint": "/v1/images/generations",
+  "output_basename": "velvet-revue",
+  "payload": {
+    "model": "grok-imagine-image-2.0",
+    "prompt": "Horizontal 16:9 cinematic nightlife advertising artwork for a large screen inside a luxurious karaoke room. High-end photographic art direction, rich blacks, red velvet, electric magenta, cyan rim light, glowing tungsten. Strong readable composition at a distance. All people are fictional adults aged 27 or older. No nudity, no explicit sexual activity, no watermark, no recognizable real brand. A sophisticated Tokyo cabaret revue poster. Three adult female stage performers in elegant fully opaque sequined evening show dresses with feather fans and opera gloves, arranged as a theatrical ensemble on red velvet steps, graceful standing dance poses, gold proscenium, mirrored disco ball overhead and dramatic pink spotlights. Wide stage composition with whole figures, confident poised faces, fashion editorial photography, glamorous theatrical performance. Typography VELVET REVUE, small line MIDNIGHT SHOW. No stripping, no exposed breasts or groin.",
+    "size": "1536x1024",
+    "n": 1
+  }
+}

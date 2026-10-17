@@ -1,0 +1,12 @@
+{
+  "id": "ktv-midnight-stage-v1",
+  "kind": "image",
+  "endpoint": "/v1/images/generations",
+  "output_basename": "midnight-stage",
+  "payload": {
+    "model": "grok-imagine-image-2.0",
+    "prompt": "Horizontal 16:9 cinematic nightlife advertising artwork for a large screen inside a luxurious karaoke room. High-end photographic art direction, rich blacks, red velvet, electric magenta, cyan rim light, glowing tungsten. Strong readable composition at a distance. All people are fictional adults aged 27 or older. No nudity, no explicit sexual activity, no watermark, no recognizable real brand. A stylish intimate Japanese live lounge stage at midnight, adult female singer in a shimmering black full-length evening dress singing into a vintage microphone, adult dancers in jewel-tone fully clothed stage outfits in soft background silhouette, fuchsia velvet curtains and a glittering silver mirror ball throwing tiny golden dots across the ceiling, cyan and warm amber stage beams in haze. Cinematic wide shot, contemporary premium nightlife campaign. Small typography AFTER HOURS, large expressive title NIGHT FEVER.",
+    "size": "1536x1024",
+    "n": 1
+  }
+}

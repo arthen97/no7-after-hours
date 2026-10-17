@@ -1,0 +1,12 @@
+{
+  "id": "ktv-kabukicho-v1",
+  "kind": "image",
+  "endpoint": "/v1/images/generations",
+  "output_basename": "kabukicho",
+  "payload": {
+    "model": "grok-imagine-image-2.0",
+    "prompt": "Horizontal 16:9 cinematic nightlife advertising artwork for a large screen inside a luxurious karaoke room. High-end photographic art direction, rich blacks, red velvet, electric magenta, cyan rim light, glowing tungsten. Strong readable composition at a distance. All people are fictional adults aged 27 or older. No nudity, no explicit sexual activity, no watermark, no recognizable real brand. Tokyo Kabukicho entertainment district at midnight after rain, dramatic low viewpoint down a neon street, dense vertical Japanese signs, red illuminated entrance arch, taxis reflected on wet asphalt, distant adult pedestrians under umbrellas. Cinematic atmospheric street photography, red and hot pink with pools of blue, anamorphic bloom, beautiful fine film grain. Large restrained headline KABUKICHO NIGHTS, small subtitle TOKYO AFTER DARK, no other English copy. Landscape full bleed image.",
+    "size": "1536x1024",
+    "n": 1
+  }
+}

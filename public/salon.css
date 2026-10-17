@@ -536,3 +536,5 @@ header{height:76px;padding:0 clamp(18px,3vw,42px);background:linear-gradient(#10
 @media(prefers-reduced-motion:reduce){.host-wheel-shell .opening-cover{will-change:auto;transform:none!important}.poster-glare,.click-sparks{display:none}}
 
 #voice-input[aria-pressed="true"]{background:#b74768;box-shadow:0 0 0 5px #ed71852a;color:#fff}#voice-live{overflow-wrap:anywhere}#voice-lang:disabled{opacity:.45}
+
+.ktv-controls{display:grid;grid-template-columns:1fr 1fr;gap:8px}.ktv-controls button{padding:10px 12px;border:1px solid #df9d7a40;border-radius:9px;background:#4c2030;color:#f6e7da;font:inherit;cursor:pointer}.ktv-controls #disco-toggle{grid-column:1/-1}.ktv-controls #disco-toggle[aria-pressed="false"]{background:#211b23;color:#b2a7b1}#ktv-now{font-size:12px;color:#d4b6bf}

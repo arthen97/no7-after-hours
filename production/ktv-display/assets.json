@@ -1,0 +1,29 @@
+{
+  "assets": [
+    {
+      "file": "public/assets/ktv/kabukicho.jpg",
+      "model": "grok-imagine-image-2.0",
+      "provider": "Merouter",
+      "recipe": "production/ktv-display/kabukicho.recipe.json",
+      "sha256": "1e5dfeddf5cf49b1213693b26ec0f1cae8a2ccd9d8c9f0edc1a8974d0816f69f",
+      "bytes": 406666
+    },
+    {
+      "file": "public/assets/ktv/velvet-revue.jpg",
+      "model": "grok-imagine-image-2.0",
+      "provider": "Merouter",
+      "recipe": "production/ktv-display/velvet-revue.recipe.json",
+      "sha256": "47159ec7ecd4d097816a191ab340db14b49903c533127647ddbbdd4ff24de8aa",
+      "bytes": 475820
+    },
+    {
+      "file": "public/assets/ktv/midnight-stage.jpg",
+      "model": "grok-imagine-image-2.0",
+      "provider": "Merouter",
+      "recipe": "production/ktv-display/midnight-stage.recipe.json",
+      "sha256": "b5ca17a1f42a9f473207989e171e6f53282d67d03c8e732de10eaf698514f1cb",
+      "bytes": 377570
+    }
+  ],
+  "presentation": "Generated still poster carousel with slow pan and crossfade; no generated video."
+}
